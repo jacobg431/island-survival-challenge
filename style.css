@@ -85,7 +85,7 @@ p {
 }
 
 .inventory-wrapper {
-    background-color: var(--primary-color);
+    background-color: var(--tertiary-color);
     border-radius: var(--spacing-size);
     display: flex;
     flex: 2;
@@ -157,7 +157,7 @@ p {
 }
 
 .tools-wrapper {
-    background-color: var(--tertiary-color);
+    background-color: var(--primary-color);
     border-radius: var(--spacing-size);
     display: flex;
     height: 100%;
