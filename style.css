@@ -53,43 +53,35 @@ p {
     gap: var(--spacing-size);
 }
 
-.progress-container {
-  width: 100%;
-  background-color: var(--text-color);
-  border-radius: 5px;
-  overflow: hidden; /* Ensures the inner bar respects the container's border radius */
-  height: 20px;
-}
-
-.progress-bar {
-    background-color: var(--quartiary-color); 
-    height: 100%;
-}
-
-.outer-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-size);
-    height: 100vh;
-    padding: 16px;
-    width: 100vw;
-}
-
-.upper-wrapper {
-    align-items: center;
+.actions-wrapper {
+    background-color: var(--secondary-color);
+    border-radius: var(--spacing-size);
     display: flex;
     flex: 1;
-    gap: var(--spacing-size);
-    justify-content: center;
-    margin: auto;
+    height: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding: var(--spacing-size);
     width: 100%;
 }
 
-.lower-wrapper {   
-    align-items: center;
-    display: flex;
-    flex: 1;
-    gap: var(--spacing-size);
+.circle-container {
+    border-radius: 50%;
+    height: 250px;
+    overflow: hidden; 
+    width: 250px;
+}
+
+.circle-container img {
+    height: 100%;
+    object-fit: cover; 
+    object-position: center;
+    width: 100%;
+}
+
+.emoji {
+    font-weight: bold;
+    font-size: var(--text-lg-size);
 }
 
 .inventory-wrapper {
@@ -135,16 +127,33 @@ p {
     width: 100%;
 }
 
-.actions-wrapper {
-    background-color: var(--secondary-color);
-    border-radius: var(--spacing-size);
+.lower-wrapper {   
+    align-items: center;
     display: flex;
     flex: 1;
+    gap: var(--spacing-size);
+}
+
+.progress-container {
+  width: 100%;
+  background-color: var(--text-color);
+  border-radius: 5px;
+  overflow: hidden;
+  height: 20px;
+}
+
+.progress-bar {
+    background-color: var(--quartiary-color); 
     height: 100%;
-    margin-left: auto;
-    margin-right: auto;
-    padding: var(--spacing-size);
-    width: 100%;
+}
+
+.outer-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-size);
+    height: 100vh;
+    padding: 16px;
+    width: 100vw;
 }
 
 .tools-wrapper {
@@ -156,21 +165,12 @@ p {
     width: 100%;
 }
 
-.circle-container {
-    border-radius: 50%;
-    height: 250px;
-    overflow: hidden; 
-    width: 250px;
-}
-
-.circle-container img {
-    height: 100%;
-    object-fit: cover; 
-    object-position: center;
+.upper-wrapper {
+    align-items: center;
+    display: flex;
+    flex: 1;
+    gap: var(--spacing-size);
+    justify-content: center;
+    margin: auto;
     width: 100%;
-}
-
-.emoji {
-    font-weight: bold;
-    font-size: var(--text-lg-size);
 }
