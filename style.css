@@ -4,13 +4,17 @@
   --tertiary-color: #95a984;
   --quartiary-color: #ef6b66;
   --background-color: #232738;
+  --background-negative-color: #e9ecf5;
   --text-color: #232738;
 
   --spacing-size: 16px;
   --spacing-lg-size: 24px;
+  --spacing-sm-size: 10px;
   --text-size: 16px;
   --text-lg-size: 20px;
-  --text-sm-size: 12px
+  --text-sm-size: 12px;
+
+  --border-solid: 2px solid;
 }
 
 html {
@@ -52,8 +56,16 @@ h4 {
 
 p {
     font-size: var(--text-sm-size);
-    margin-block-end: 0px;
-    margin-block-start: 0px;
+    margin-block: 0px;
+}
+
+ul {
+    padding-inline-start: var(--spacing-lg-size);
+    margin-block: 0px;
+}
+
+li {
+    font-size: var(--text-sm-size);
 }
 
 #inventory {
@@ -140,7 +152,7 @@ p {
 }
 
 .inventory-item-wrapper {
-    border: 2px solid var(--background-color);
+    border: var(--border-solid) var(--background-color);
     border-radius: var(--spacing-size);
     height: 64px;
     width: 64px;
@@ -185,9 +197,44 @@ p {
     background-color: var(--primary-color);
     border-radius: var(--spacing-size);
     display: flex;
+    gap: var(--spacing-lg-size);
     height: 100%;
-    padding: var(--spacing-size);
+    padding: var(--spacing-lg-size);
     width: 100%;
+}
+
+.tools-column {
+    display: flex;
+    flex: 1;
+    height: 100%;
+}
+
+.tool-info-wrapper {
+    align-items: center;
+    border-radius: var(--spacing-size);
+    background-color: var(--background-negative-color);
+    display: flex;
+    gap: var(--spacing-size);
+    justify-content: center;
+    padding: var(--spacing-lg-size);
+}
+
+.tool-info-inner-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-size);
+
+}
+
+.tool-dropdown-wrapper {
+    display: flex;
+    gap: var(--spacing-size);
+}
+
+.tool-img-wrapper {
+    border: var(--border-solid) var(--background-color);
+    border-radius: var(--spacing-size);
+    width: 180px;
 }
 
 .upper-wrapper {
