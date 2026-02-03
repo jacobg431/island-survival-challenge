@@ -10,11 +10,15 @@
   --spacing-size: 16px;
   --spacing-lg-size: 24px;
   --spacing-sm-size: 10px;
+
   --text-size: 16px;
   --text-lg-size: 20px;
   --text-sm-size: 12px;
 
   --border-solid: 2px solid;
+
+  --widget-height: 36px;
+  --widget-width: 96px;
 }
 
 html {
@@ -38,8 +42,8 @@ button {
     background-color: var(--quartiary-color);
     border-radius: var(--spacing-size);
     font-weight: 600;
-    height: 36px;
-    width: 96px;
+    height: var(--widget-height);
+    width: var(--widget-width);
 }
 
 h3 {
@@ -68,6 +72,15 @@ li {
     font-size: var(--text-sm-size);
 }
 
+select, option {
+    height: var(--widget-height);
+    width: calc(2 * var(--widget-width));
+}
+
+select {
+    border-radius: var(--spacing-sm-size);
+}
+
 #inventory {
     display: flex;
     flex-direction: column;
@@ -83,7 +96,7 @@ li {
     justify-content: start;
     margin-left: auto;
     margin-right: auto;
-    padding: var(--spacing-size);
+    padding: var(--spacing-lg-size);
     width: 100%;
 }
 
@@ -217,6 +230,7 @@ li {
     gap: var(--spacing-size);
     justify-content: center;
     padding: var(--spacing-lg-size);
+    width: 100%;
 }
 
 .tool-info-inner-wrapper {
@@ -226,7 +240,15 @@ li {
 
 }
 
+.tool-selection-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-size);
+    margin: auto;
+}
+
 .tool-dropdown-wrapper {
+    align-items: center;
     display: flex;
     gap: var(--spacing-size);
 }
@@ -235,6 +257,11 @@ li {
     border: var(--border-solid) var(--background-color);
     border-radius: var(--spacing-size);
     width: 180px;
+}
+
+.tool-dropdown-wrapper {
+    display: flex;
+    gap: var(--spacing-size);
 }
 
 .upper-wrapper {
