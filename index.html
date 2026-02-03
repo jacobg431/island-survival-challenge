@@ -27,10 +27,10 @@
                 
                 <div class="inventory-column">
                     <div class="inventory-column-inner">
-                        <span class="emoji">&#129704; 10</span>
-                        <span class="emoji">&#129344; 10</span>
-                        <span class="emoji">&#127830; 10</span>
-                        <span class="emoji">&#128507; 5</span>
+                        <span class="emoji">&#x1fab5; <span id="inventory-wood">0</span></span>
+                        <span class="emoji">&#129344; <span id="inventory-vines">0</span></span>
+                        <span class="emoji">&#127830; <span id="inventory-food">0</span></span>
+                        <span class="emoji">&#129704; <span id="inventory-stone">0</span></span>
                     </div>
                 </div>
                 
@@ -59,7 +59,7 @@
                         </div>
                         <div class="action-item-wrapper">
                             <button id="gather-button">Gather</button>
-                            <span class="emoji">&#129704; &#129344; &#128507;</span>
+                            <span class="emoji">&#x1fab5; &#129344; &#129704;</span>
                         </div>
                         <div class="action-item-wrapper">
                             <button id="rest-button">Rest</button>
@@ -105,11 +105,7 @@
                     <div class="tool-selection-wrapper">
                         <div class="tool-dropdown-wrapper">
                             <p>Choose an item to craft</p>
-                            <select>
-                                <option value="axe">Axe</option>
-                                <option value="spear" selected>Spear</option>
-                                <option value="boat">Boat</option>
-                            </select>
+                            <select id="item-select"></select>
                         </div>
                         <div class="tool-button-wrapper">
                             <button id="craft-button" >Craft</button>

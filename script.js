@@ -13,6 +13,9 @@ const inventoryVines = document.getElementById("inventory-vines");
 const inventoryFood = document.getElementById("inventory-food");
 const inventoryStone = document.getElementById("inventory-stone");
 
+const itemSelect = document.getElementById("item-select");
+
+const baseApiUrl = "https://island-survival-kit-builder.onrender.com/tools";
 const playerDeathAudio = new Audio("sounds/lego-yoda-death-sound-effect.mp3");
 
 // Objects
@@ -32,10 +35,61 @@ const currentResources = {
     energy: 100
 }
 
-
 // Functions
+const fetchApiData = async () => {
+    let resultObj;
+    await fetch(baseApiUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            return resultObj = data;
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error.message);
+        });
+
+    return resultObj;
+}
+
+const getToolItemById = (id) => {
+    let resultObj = fetchApiData();
+    if (!resultObj) {
+        alert("There was an error getting the API data!");
+        return;
+    }
+    for (const tool of resultObj) {
+        if (tool.id === id) {
+            return tool;
+        }
+    }
+    alert("Item does not exist!")
+    return;
+}
+
+const setSelectOptions = async () => {
+    let resultObj = await fetchApiData();
+    if (!resultObj) {
+        alert("There was an error getting the API data!");
+        return;
+    }
+    resultObj.forEach(tool => {
+        const option = document.createElement("option");
+        option.value = tool.id;
+        option.textContent = tool.title
+        itemSelect.appendChild(option);
+    });
+}
+
 const updateDisplay = () => {
     progressBar.style.width = String(currentResources.energy) + "%";
+    inventoryWood.innerText = currentResources.wood;
+    inventoryVines.innerText = currentResources.vines;
+    inventoryFood.innerText = currentResources.food;
+    inventoryStone.innerText = currentResources.stone;
 }
 
 const resetGame = () => {
@@ -92,6 +146,7 @@ const onSailBtnClick = () => {
     console.log("Sail button was clicked!");
 }
 const onCraftBtnClick = () => {
+    const itemSelected = itemSelect.value;
     addItemToInventory("https://res.cloudinary.com/dvwpcohmk/image/upload/v1770034511/Axe_yrbpm2.png");
 }
 
@@ -102,3 +157,4 @@ sailBtn.addEventListener("click", onSailBtnClick);
 craftBtn.addEventListener("click", onCraftBtnClick);
 
 resetGame();
+setSelectOptions();
