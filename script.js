@@ -55,8 +55,8 @@ const fetchApiData = async () => {
     return resultObj;
 }
 
-const getToolItemById = (id) => {
-    let resultObj = fetchApiData();
+const getToolItemById = async (id) => {
+    let resultObj = await fetchApiData();
     if (!resultObj) {
         alert("There was an error getting the API data!");
         return;
@@ -145,9 +145,11 @@ const onRestBtnClick = () => {
 const onSailBtnClick = () => {
     console.log("Sail button was clicked!");
 }
-const onCraftBtnClick = () => {
-    const itemSelected = itemSelect.value;
-    addItemToInventory("https://res.cloudinary.com/dvwpcohmk/image/upload/v1770034511/Axe_yrbpm2.png");
+const onCraftBtnClick = async () => {
+    const itemSelectedId = parseInt(itemSelect.value);
+    const itemSelected = await getToolItemById(itemSelectedId);
+    const itemUrl = itemSelected["img-url"];
+    addItemToInventory(itemUrl);
 }
 
 huntBtn.addEventListener("click", onHuntBtnClick);
