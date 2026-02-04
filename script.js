@@ -4,6 +4,7 @@ const gatherBtn = document.getElementById("gather-button");
 const restBtn = document.getElementById("rest-button");
 const sailBtn = document.getElementById("sail-button");
 const craftBtn = document.getElementById("craft-button");
+const allBtns = document.getElementsByTagName("button");
 
 const progressBar = document.getElementById("energy-bar");
 
@@ -46,6 +47,37 @@ const currentResources = {
     stone: 0,
     energy: 100
 };
+
+const actionRequirements = {
+    huntRequirements: {
+        wood: 0,
+        vines: 0,
+        food: 0,
+        stone: 0,
+        energy: 10
+    },
+    gatherRequirements: {
+        wood: 0,
+        vines: 0,
+        food: 0,
+        stone: 0,
+        energy: 20
+    },
+    restRequirements: {
+        wood: 0,
+        vines: 0,
+        food: 10,
+        stone: 0,
+        energy: 0
+    },
+    sailRequirements: {
+        wood: 0,
+        vines: 0,
+        food: 0,
+        stone: 0,
+        energy: 40
+    }
+}
 
 // Collections
 const inventoryItemIds = [];
@@ -103,6 +135,28 @@ const getItemSelected = async () => {
     return await getToolItemById(itemSelectedId);
 }
 
+const isActionRequirementListFulfilled = (actionKey) => {
+    if (!Object.hasOwn(actionRequirements, actionKey)) {
+        return false;
+    }
+    
+    const actionObj = actionRequirements[actionKey];
+    if (currentResources.wood < actionObj.wood ||
+        currentResources.vines < actionObj.vines ||
+        currentResources.food < actionObj.food ||
+        currentResources.stone < actionObj.stone ||
+        currentResources.energy < actionObj.energy
+    ) {
+        return false;
+    }
+
+    if (actionKey === "sailRequirements" && !inventoryItemIds.includes(5)) {
+        return false;
+    }
+
+    return true;
+} 
+
 const updateDisplay = () => {
     progressBar.style.width = String(currentResources.energy) + "%";
     inventoryWood.innerText = currentResources.wood;
@@ -131,7 +185,56 @@ const updateToolInfoDisplay = async () => {
     toolInfoImg.src = imgUrl;
 }
 
+const updateButtonClickability = () => {
+    if (isActionRequirementListFulfilled("huntRequirements")) {
+        huntBtn.disabled = false;
+    } else {
+        huntBtn.disabled = true;
+    }
+    
+    if (isActionRequirementListFulfilled("gatherRequirements")) {
+        gatherBtn.disabled = false;
+    } else {
+        gatherBtn.disabled = true;
+    }
+    
+    if (isActionRequirementListFulfilled("restRequirements")) {
+        restBtn.disabled = false;
+    } else {
+        restBtn.disabled = true;
+    }
+    
+    if (isActionRequirementListFulfilled("sailRequirements")) {
+        sailBtn.disabled = false;
+    } else {
+        sailBtn.disabled = true;
+    }
+}
+
+const addItemToInventory = (id, imgUrl) => {
+    if (inventoryItemIds.includes(parseInt(id))) {
+        return;
+    }
+
+    let inventoryItemWrapper = document.createElement("div");
+    let inventoryItem = document.createElement("img");
+
+    inventoryItemWrapper.className = "inventory-item-wrapper";
+    inventoryItem.className = "inventory-item"
+    inventoryItem.src = imgUrl;
+    inventoryItemWrapper.appendChild(inventoryItem);
+    inventory.appendChild(inventoryItemWrapper);
+
+    inventoryItemIds.push(parseInt(id));
+}
+
+const removeItemsFromInventory = () => {
+    inventoryItemIds.length = 0;
+    inventory.replaceChildren();
+}
+
 const resetGame = () => {
+    removeItemsFromInventory();
     Object.assign(currentResources, startingResources);
     updateDisplay();
 }
@@ -150,24 +253,6 @@ const gameVictory = () => {
         alert("YOU WIN!");
         resetGame();
     }, 10);
-}
-
-const addItemToInventory = (id, imgUrl) => {
-
-    if (inventoryItemIds.includes(parseInt(id))) {
-        return;
-    }
-
-    let inventoryItemWrapper = document.createElement("div");
-    let inventoryItem = document.createElement("img");
-
-    inventoryItemWrapper.className = "inventory-item-wrapper";
-    inventoryItem.className = "inventory-item"
-    inventoryItem.src = imgUrl;
-    inventoryItemWrapper.appendChild(inventoryItem);
-    inventory.appendChild(inventoryItemWrapper);
-
-    inventoryItemIds.push(parseInt(id));
 }
 
 const getRandomIntInclusive = (min, max) => {
@@ -290,6 +375,11 @@ const onCraftBtnClick = async () => {
     const itemId = itemSelected["id"];
     const itemUrl = itemSelected["img-url"];
     addItemToInventory(itemId, itemUrl);
+    updateButtonClickability();
+}
+
+const onAnyBtnClick = () => {
+    updateButtonClickability();
 }
 
 const onItemSelectChange = async () => {
@@ -301,10 +391,16 @@ gatherBtn.addEventListener("click", onGatherBtnClick);
 restBtn.addEventListener("click", onRestBtnClick);
 sailBtn.addEventListener("click", onSailBtnClick);
 craftBtn.addEventListener("click", onCraftBtnClick);
+
+for (let i = 0; i < allBtns.length; i++) {
+    allBtns[i].addEventListener("click", onAnyBtnClick);
+}
+
 itemSelect.addEventListener("change", onItemSelectChange);
 
 window.onload = async () => {
     resetGame();
     await setSelectOptions();
     await updateToolInfoDisplay();
+    updateButtonClickability();
 }
