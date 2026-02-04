@@ -34,7 +34,7 @@ const restAudio = new Audio("sounds/minecraft-eating-sound-effect.mp3");
 // Objects
 const startingResources = {
     wood: 20,
-    vines: 10,
+    vine: 10,
     food: 30,
     stone: 20,
     energy: 70
@@ -42,7 +42,7 @@ const startingResources = {
 
 const currentResources = {
     wood: 0,
-    vines: 0,
+    vine: 0,
     food: 0,
     stone: 0,
     energy: 100
@@ -51,28 +51,28 @@ const currentResources = {
 const actionRequirements = {
     huntRequirements: {
         wood: 0,
-        vines: 0,
+        vine: 0,
         food: 0,
         stone: 0,
         energy: 10
     },
     gatherRequirements: {
         wood: 0,
-        vines: 0,
+        vine: 0,
         food: 0,
         stone: 0,
         energy: 20
     },
     restRequirements: {
         wood: 0,
-        vines: 0,
+        vine: 0,
         food: 10,
         stone: 0,
         energy: 0
     },
     sailRequirements: {
         wood: 0,
-        vines: 0,
+        vine: 0,
         food: 0,
         stone: 0,
         energy: 40
@@ -142,7 +142,7 @@ const isActionRequirementListFulfilled = (actionKey) => {
     
     const actionObj = actionRequirements[actionKey];
     if (currentResources.wood < actionObj.wood ||
-        currentResources.vines < actionObj.vines ||
+        currentResources.vine < actionObj.vine ||
         currentResources.food < actionObj.food ||
         currentResources.stone < actionObj.stone ||
         currentResources.energy < actionObj.energy
@@ -157,10 +157,35 @@ const isActionRequirementListFulfilled = (actionKey) => {
     return true;
 } 
 
+const isItemCraftable = (id, requirements) => {
+    if (inventoryItemIds.includes(parseInt(id))) {
+        return;
+    }
+
+    if (!Array.isArray(requirements)) {
+        return false;
+    }
+
+    for (let i = 0; i < requirements.length; i++) {
+        const resourceAmountArray = requirements[i].split(" ");
+        const amount = parseInt(resourceAmountArray[0]);
+        const resource = resourceAmountArray.at(-1);
+        if (!Object.hasOwn(currentResources, resource)) {
+            return false;
+        }
+
+        if (currentResources[resource] < amount) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 const updateDisplay = () => {
     progressBar.style.width = String(currentResources.energy) + "%";
     inventoryWood.innerText = currentResources.wood;
-    inventoryVines.innerText = currentResources.vines;
+    inventoryVines.innerText = currentResources.vine;
     inventoryFood.innerText = currentResources.food;
     inventoryStone.innerText = currentResources.stone;
 }
@@ -185,7 +210,7 @@ const updateToolInfoDisplay = async () => {
     toolInfoImg.src = imgUrl;
 }
 
-const updateButtonClickability = () => {
+const updateButtonClickability = async (selectOptionChange = false) => {
     if (isActionRequirementListFulfilled("huntRequirements")) {
         huntBtn.disabled = false;
     } else {
@@ -209,10 +234,23 @@ const updateButtonClickability = () => {
     } else {
         sailBtn.disabled = true;
     }
+
+    if (!selectOptionChange) {
+        return;
+    }
+
+    const item = await getItemSelected();
+    const itemId = item["id"];
+    const itemRequirements = item["requirements"];
+    if (isItemCraftable(itemId, itemRequirements)) {
+        craftBtn.disabled = false;
+    } else {
+        craftBtn.disabled = true;
+    }
 }
 
-const addItemToInventory = (id, imgUrl) => {
-    if (inventoryItemIds.includes(parseInt(id))) {
+const addItemToInventory = (id, requirements, imgUrl) => {
+    if (!isItemCraftable(id, requirements, imgUrl)) {
         return;
     }
 
@@ -237,7 +275,7 @@ const resetGame = () => {
     removeItemsFromInventory();
     Object.assign(currentResources, startingResources);
     updateDisplay();
-    updateButtonClickability();
+    updateButtonClickability(true);
 }
 
 const gameOver = () => {
@@ -274,12 +312,12 @@ const changeWood = (amount) => {
 }
 
 const changeVines = (amount) => {
-    const newVines = currentResources.vines + amount;
+    const newVines = currentResources.vine + amount;
     if (newVines < 0) {
         return false;
     }
 
-    currentResources.vines = newVines;
+    currentResources.vine = newVines;
     updateDisplay();
     return true;
 }
@@ -374,8 +412,9 @@ const onSailBtnClick = () => {
 const onCraftBtnClick = async () => {
     const itemSelected = await getItemSelected();
     const itemId = itemSelected["id"];
+    const itemRequirements = itemSelected["requirements"];
     const itemUrl = itemSelected["img-url"];
-    addItemToInventory(itemId, itemUrl);
+    addItemToInventory(itemId, itemRequirements, itemUrl);
     updateButtonClickability();
 }
 
@@ -384,6 +423,7 @@ const onAnyBtnClick = () => {
 }
 
 const onItemSelectChange = async () => {
+    await updateButtonClickability(true);
     await updateToolInfoDisplay();
 }
 
