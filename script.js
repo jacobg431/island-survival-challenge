@@ -360,6 +360,13 @@ const onHuntBtnClick = () => {
         return;
     }
 
+    setTimeout(() => {
+        huntFirstAudio.play();
+    }, 10);
+    setTimeout(() => {
+        huntSecondAudio.play();
+    }, 500);
+
     let foodAmount = getRandomIntInclusive(1, 20);
     changeFood(foodAmount);
 }
@@ -368,6 +375,8 @@ const onGatherBtnClick = () => {
     if (!changeEnergy(-10)) {
         return;
     }
+
+    gatherAudio.play();
 
     let woodAmount = getRandomIntInclusive(1, 10);
     let vineAmount = getRandomIntInclusive(1, 10);
@@ -384,6 +393,8 @@ const onRestBtnClick = () => {
     if (!changeFood(-10)) {
         return;
     }
+
+    restAudio.play();
 
     let energyAmount = getRandomIntInclusive(1, 20);
     changeEnergy(energyAmount);
