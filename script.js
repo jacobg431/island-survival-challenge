@@ -237,6 +237,7 @@ const resetGame = () => {
     removeItemsFromInventory();
     Object.assign(currentResources, startingResources);
     updateDisplay();
+    updateButtonClickability();
 }
 
 const gameOver = () => {
