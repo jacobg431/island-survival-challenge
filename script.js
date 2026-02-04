@@ -30,7 +30,7 @@ const startingResources = {
     food: 30,
     stone: 20,
     energy: 70
-}
+};
 
 const currentResources = {
     wood: 0,
@@ -38,7 +38,10 @@ const currentResources = {
     food: 0,
     stone: 0,
     energy: 100
-}
+};
+
+// Collections
+const inventoryItemIds = [];
 
 // Functions
 const fetchApiData = async () => {
@@ -153,14 +156,22 @@ const changeEnergy = async (amount) =>  {
     updateDisplay();
 }
 
-const addItemToInventory = (imgUrl) => {
+const addItemToInventory = (id, imgUrl) => {
+
+    if (inventoryItemIds.includes(parseInt(id))) {
+        return;
+    }
+
     let inventoryItemWrapper = document.createElement("div");
     let inventoryItem = document.createElement("img");
+
     inventoryItemWrapper.className = "inventory-item-wrapper";
     inventoryItem.className = "inventory-item"
     inventoryItem.src = imgUrl;
     inventoryItemWrapper.appendChild(inventoryItem);
     inventory.appendChild(inventoryItemWrapper);
+
+    inventoryItemIds.push(parseInt(id));
 }
 
 const onHuntBtnClick = () => {
@@ -177,8 +188,9 @@ const onSailBtnClick = () => {
 }
 const onCraftBtnClick = async () => {
     const itemSelected = await getItemSelected();
+    const itemId = itemSelected["id"];
     const itemUrl = itemSelected["img-url"];
-    addItemToInventory(itemUrl);
+    addItemToInventory(itemId, itemUrl);
 }
 
 const onItemSelectChange = async () => {
