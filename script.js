@@ -181,11 +181,16 @@ const onCraftBtnClick = async () => {
     addItemToInventory(itemUrl);
 }
 
+const onItemSelectChange = async () => {
+    await updateToolInfoDisplay();
+}
+
 huntBtn.addEventListener("click", onHuntBtnClick);
 gatherBtn.addEventListener("click", onGatherBtnClick);
 restBtn.addEventListener("click", onRestBtnClick);
 sailBtn.addEventListener("click", onSailBtnClick);
 craftBtn.addEventListener("click", onCraftBtnClick);
+itemSelect.addEventListener("change", onItemSelectChange);
 
 window.onload = async () => {
     resetGame();
