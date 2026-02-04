@@ -13,6 +13,11 @@ const inventoryVines = document.getElementById("inventory-vines");
 const inventoryFood = document.getElementById("inventory-food");
 const inventoryStone = document.getElementById("inventory-stone");
 
+const toolInfoTitle = document.getElementById("tool-info-title");
+const toolInfoDescription = document.getElementById("tool-info-description");
+const toolInfoRequirements = document.getElementById("tool-info-requirements");
+const toolInfoImg = document.getElementById("tool-info-img");
+
 const itemSelect = document.getElementById("item-select");
 
 const baseApiUrl = "https://island-survival-kit-builder.onrender.com/tools";
@@ -84,12 +89,37 @@ const setSelectOptions = async () => {
     });
 }
 
+const getItemSelected = async () => {
+    const itemSelectedId = parseInt(itemSelect.value);
+    return await getToolItemById(itemSelectedId);
+}
+
 const updateDisplay = () => {
     progressBar.style.width = String(currentResources.energy) + "%";
     inventoryWood.innerText = currentResources.wood;
     inventoryVines.innerText = currentResources.vines;
     inventoryFood.innerText = currentResources.food;
     inventoryStone.innerText = currentResources.stone;
+}
+
+const updateToolInfoDisplay = async () => {
+    const itemSelected = await getItemSelected(); 
+    const title = itemSelected["title"];
+    const description = itemSelected["description"];
+    const requirementArray = itemSelected["requirements"];
+    const imgUrl = itemSelected["img-url"];
+
+    toolInfoTitle.innerText = title;
+    toolInfoDescription.innerText = description;
+
+    toolInfoRequirements.replaceChildren();
+    for (const requirement of requirementArray) {
+        const toolInfoRequirement = document.createElement("li");
+        toolInfoRequirement.innerText = requirement;
+        toolInfoRequirements.appendChild(toolInfoRequirement);
+    }
+
+    toolInfoImg.src = imgUrl;
 }
 
 const resetGame = () => {
@@ -146,8 +176,7 @@ const onSailBtnClick = () => {
     console.log("Sail button was clicked!");
 }
 const onCraftBtnClick = async () => {
-    const itemSelectedId = parseInt(itemSelect.value);
-    const itemSelected = await getToolItemById(itemSelectedId);
+    const itemSelected = await getItemSelected();
     const itemUrl = itemSelected["img-url"];
     addItemToInventory(itemUrl);
 }
@@ -158,5 +187,8 @@ restBtn.addEventListener("click", onRestBtnClick);
 sailBtn.addEventListener("click", onSailBtnClick);
 craftBtn.addEventListener("click", onCraftBtnClick);
 
-resetGame();
-setSelectOptions();
+window.onload = async () => {
+    resetGame();
+    await setSelectOptions();
+    await updateToolInfoDisplay();
+}
