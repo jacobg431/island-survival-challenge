@@ -20,8 +20,15 @@ const toolInfoImg = document.getElementById("tool-info-img");
 
 const itemSelect = document.getElementById("item-select");
 
+// Other constants
 const baseApiUrl = "https://island-survival-kit-builder.onrender.com/tools";
+
 const playerDeathAudio = new Audio("sounds/lego-yoda-death-sound-effect.mp3");
+const playerVictoryAudio = new Audio("sounds/celebrate-good-times.mp3");
+const gatherAudio = new Audio("sounds/skyrim-quest-update.mp3");
+const huntFirstAudio = new Audio("sounds/amongus-death-sound-effect.mp3");
+const huntSecondAudio = new Audio("sounds/bone-crack-sound-effect.mp3");
+const restAudio = new Audio("sounds/minecraft-eating-sound-effect.mp3");
 
 // Objects
 const startingResources = {
@@ -74,8 +81,7 @@ const getToolItemById = async (id) => {
             return tool;
         }
     }
-    alert("Item does not exist!")
-    return;
+    return false;
 }
 
 const setSelectOptions = async () => {
@@ -138,22 +144,12 @@ const gameOver = () => {
     }, 10);
 }
 
-const changeEnergy = async (amount) =>  {
-    const energy = Math.floor(parseFloat(progressBar.style.width));
-    const newEnergy = energy + amount;
-    if (newEnergy <= 0) {
-        currentResources.energy = 0;
-        updateDisplay();
-        gameOver();
-        return;
-    }
-    
-    if (newEnergy > 100) {
-        currentResources.energy = 100;
-    } else {
-        currentResources.energy = newEnergy;
-    }
-    updateDisplay();
+const gameVictory = () => {
+    setTimeout(() => {
+        playerVictoryAudio.play();
+        alert("YOU WIN!");
+        resetGame();
+    }, 10);
 }
 
 const addItemToInventory = (id, imgUrl) => {
@@ -174,18 +170,121 @@ const addItemToInventory = (id, imgUrl) => {
     inventoryItemIds.push(parseInt(id));
 }
 
+const getRandomIntInclusive = (min, max) => {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+const changeWood = (amount) => {
+    const newWood = currentResources.wood + amount;
+    if (newWood < 0) {
+        return false;
+    }
+
+    currentResources.wood = newWood;
+    updateDisplay();
+    return true;
+}
+
+const changeVines = (amount) => {
+    const newVines = currentResources.vines + amount;
+    if (newVines < 0) {
+        return false;
+    }
+
+    currentResources.vines = newVines;
+    updateDisplay();
+    return true;
+}
+
+const changeFood = (amount) => {
+    const newFood = currentResources.food + amount;
+    if (newFood < 0) {
+        return false;
+    }
+
+    currentResources.food = newFood;
+    updateDisplay();
+    return true;
+}
+
+const changeStone = (amount) => {
+    const newStone = currentResources.stone + amount;
+    if (newStone < 0) {
+        return false;
+    }
+
+    currentResources.stone = newStone;
+    updateDisplay();
+    return true;
+}
+
+const changeEnergy = (amount) =>  {
+    const energy = Math.floor(parseFloat(progressBar.style.width));
+    const newEnergy = energy + amount;
+    if (newEnergy <= 0) {
+        currentResources.energy = 0;
+        updateDisplay();
+        gameOver();
+        return false;
+    }
+    
+    if (newEnergy > 100) {
+        currentResources.energy = 100;
+    } else {
+        currentResources.energy = newEnergy;
+    }
+    updateDisplay();
+    return true;
+}
+
 const onHuntBtnClick = () => {
-    changeEnergy(-10);
+    if (!changeEnergy(-20)) {
+        return;
+    }
+
+    let foodAmount = getRandomIntInclusive(1, 20);
+    changeFood(foodAmount);
 }
+
 const onGatherBtnClick = () => {
-    console.log("Gather button was clicked!");
+    if (!changeEnergy(-10)) {
+        return;
+    }
+
+    let woodAmount = getRandomIntInclusive(1, 10);
+    let vineAmount = getRandomIntInclusive(1, 10);
+    let foodAmount = getRandomIntInclusive(1, 10);
+    let stoneAmount = getRandomIntInclusive(1, 5);
+
+    changeWood(woodAmount);
+    changeVines(vineAmount);
+    changeFood(foodAmount);
+    changeStone(stoneAmount);
 }
+
 const onRestBtnClick = () => {
-    console.log("Rest button was clicked!");
+    if (!changeFood(-10)) {
+        return;
+    }
+
+    let energyAmount = getRandomIntInclusive(1, 20);
+    changeEnergy(energyAmount);
 }
+
 const onSailBtnClick = () => {
-    console.log("Sail button was clicked!");
+    if (!getToolItemById()) {
+        return;
+    }
+    
+    if (!changeEnergy(-40)) {
+        return;
+    }
+
+    gameVictory();
 }
+
 const onCraftBtnClick = async () => {
     const itemSelected = await getItemSelected();
     const itemId = itemSelected["id"];
