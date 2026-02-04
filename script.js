@@ -79,12 +79,14 @@ const actionRequirements = {
     }
 }
 
+let apiData = {}
+
 // Collections
 const inventoryItemIds = [];
 
 // Functions
 const fetchApiData = async () => {
-    let resultObj;
+    apiData = {};
     await fetch(baseApiUrl)
         .then(response => {
             if (!response.ok) {
@@ -93,22 +95,15 @@ const fetchApiData = async () => {
             return response.json();
         })
         .then(data => {
-            return resultObj = data;
+            apiData = data;
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error.message);
         });
-
-    return resultObj;
 }
 
-const getToolItemById = async (id) => {
-    let resultObj = await fetchApiData();
-    if (!resultObj) {
-        alert("There was an error getting the API data!");
-        return;
-    }
-    for (const tool of resultObj) {
+const getToolItemById = (id) => {
+    for (const tool of apiData) {
         if (tool.id === id) {
             return tool;
         }
@@ -116,13 +111,8 @@ const getToolItemById = async (id) => {
     return false;
 }
 
-const setSelectOptions = async () => {
-    let resultObj = await fetchApiData();
-    if (!resultObj) {
-        alert("There was an error getting the API data!");
-        return;
-    }
-    resultObj.forEach(tool => {
+const setSelectOptions = () => {
+    apiData.forEach(tool => {
         const option = document.createElement("option");
         option.value = tool.id;
         option.textContent = tool.title
@@ -130,9 +120,9 @@ const setSelectOptions = async () => {
     });
 }
 
-const getItemSelected = async () => {
+const getItemSelected = () => {
     const itemSelectedId = parseInt(itemSelect.value);
-    return await getToolItemById(itemSelectedId);
+    return getToolItemById(itemSelectedId);
 }
 
 const isActionRequirementListFulfilled = (actionKey) => {
@@ -190,8 +180,8 @@ const updateDisplay = () => {
     inventoryStone.innerText = currentResources.stone;
 }
 
-const updateToolInfoDisplay = async () => {
-    const itemSelected = await getItemSelected(); 
+const updateToolInfoDisplay = () => {
+    const itemSelected = getItemSelected(); 
     const title = itemSelected["title"];
     const description = itemSelected["description"];
     const requirementArray = itemSelected["requirements"];
@@ -210,7 +200,7 @@ const updateToolInfoDisplay = async () => {
     toolInfoImg.src = imgUrl;
 }
 
-const updateButtonClickability = async (selectOptionChange = false) => {
+const updateButtonClickability = (selectOptionChange = false) => {
     if (isActionRequirementListFulfilled("huntRequirements")) {
         huntBtn.disabled = false;
     } else {
@@ -239,12 +229,13 @@ const updateButtonClickability = async (selectOptionChange = false) => {
         return;
     }
 
-    const item = await getItemSelected();
+    const item = getItemSelected();
     const itemId = item["id"];
     const itemRequirements = item["requirements"];
     if (isItemCraftable(itemId, itemRequirements)) {
         craftBtn.disabled = false;
     } else {
+        console.log(item)
         craftBtn.disabled = true;
     }
 }
@@ -271,11 +262,12 @@ const removeItemsFromInventory = () => {
     inventory.replaceChildren();
 }
 
-const resetGame = () => {
+const resetGame = async () => {
+    await fetchApiData();
     removeItemsFromInventory();
     Object.assign(currentResources, startingResources);
     updateDisplay();
-    updateButtonClickability(true);
+    updateButtonClickability();
 }
 
 const gameOver = () => {
@@ -409,8 +401,8 @@ const onSailBtnClick = () => {
     gameVictory();
 }
 
-const onCraftBtnClick = async () => {
-    const itemSelected = await getItemSelected();
+const onCraftBtnClick = () => {
+    const itemSelected = getItemSelected();
     const itemId = itemSelected["id"];
     const itemRequirements = itemSelected["requirements"];
     const itemUrl = itemSelected["img-url"];
@@ -422,9 +414,9 @@ const onAnyBtnClick = () => {
     updateButtonClickability();
 }
 
-const onItemSelectChange = async () => {
-    await updateButtonClickability(true);
-    await updateToolInfoDisplay();
+const onItemSelectChange = () => {
+    updateButtonClickability(true);
+    updateToolInfoDisplay();
 }
 
 huntBtn.addEventListener("click", onHuntBtnClick);
@@ -440,8 +432,8 @@ for (let i = 0; i < allBtns.length; i++) {
 itemSelect.addEventListener("change", onItemSelectChange);
 
 window.onload = async () => {
-    resetGame();
-    await setSelectOptions();
-    await updateToolInfoDisplay();
-    updateButtonClickability();
+    await resetGame();
+    setSelectOptions();
+    updateToolInfoDisplay();
+    updateButtonClickability(true);
 }
