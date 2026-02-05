@@ -6,8 +6,15 @@ gathering food and materials. You can craft tools to improve gathering and there
 survival. You must manage your energy and what you gather efficiently. The ultimate goal is to gather enough
 resources and craft a boat to escape the island.
 
-## Install
+## Prerequisites
+If you want to host this webpage yourself, make sure you have Git installed and access to any hosting service of your choice.
+Otherwise, the webpage is available at 
 
-## Build
+## Install
+Install the application by cloning this repository through your preferred CLI program:
+```bash
+git clone https://github.com/jacobg431/island-survival-challenge.git
+```
 
 ## Run
+Run the application through any hosting service of your choice.

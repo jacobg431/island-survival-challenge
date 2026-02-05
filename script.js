@@ -102,7 +102,9 @@ const currentModifiers = {
     food: 1.0
 }
 
+// Global variables
 let apiData = {}
+let gameActive = false;
 
 // Collections
 const inventoryItemIds = [];
@@ -282,7 +284,7 @@ const updateButtonClickability = () => {
     }
 
     const noActionsAvailable = isActionAvailableArray.every(element => element === false);
-    if (noActionsAvailable) {
+    if (noActionsAvailable && gameActive) {
         setTimeout(() => {
             gameOver();
         }, 200);
@@ -322,24 +324,31 @@ const resetGame = async () => {
     removeItemsFromInventory();
     Object.assign(currentResources, startingResources);
     Object.assign(currentModifiers, startingModifiers);
+    gameActive = true;
     updateDisplay();
     updateButtonClickability();
 }
 
 const gameOver = () => {
+    gameActive = false;
     setTimeout(() => {
         playerDeathAudio.play();
+    }, 10)
+    setTimeout(() => {
         alert("Game Over!");
         resetGame();
     }, 10);
 }
 
 const gameVictory = () => {
+    gameActive = false;
     setTimeout(() => {
         playerVictoryAudio.play();
+    }, 10)
+    setTimeout(() => {
         alert("YOU WIN!");
         resetGame();
-    }, 10);
+    }, 200);
 }
 
 const getRandomIntInclusive = (min, max) => {
@@ -441,7 +450,7 @@ const performHuntAction = () => {
         return false;
     }
 
-    let foodAmount = getRandomIntInclusive(1, 20) * Math.floor(getCurrentModifierAmount("wood"));
+    let foodAmount = getRandomIntInclusive(1, 20) * Math.floor(getCurrentModifierAmount("food"));
     let fangAmount = Math.floor(parseFloat(getRandomIntInclusive(1, 10)) / 10.0); // <-- 10% chance
     changeResource("food", foodAmount);
     changeResource("fang", fangAmount);
