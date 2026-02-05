@@ -13,6 +13,8 @@ const inventoryWood = document.getElementById("inventory-wood");
 const inventoryVines = document.getElementById("inventory-vines");
 const inventoryFood = document.getElementById("inventory-food");
 const inventoryStone = document.getElementById("inventory-stone");
+const inventoryObsidian = document.getElementById("inventory-obsidian");
+const inventoryFang = document.getElementById("inventory-fang");
 
 const toolInfoTitle = document.getElementById("tool-info-title");
 const toolInfoDescription = document.getElementById("tool-info-description");
@@ -37,6 +39,8 @@ const startingResources = {
     vine: 10,
     food: 30,
     stone: 20,
+    obsidian: 0,
+    fang: 0,
     energy: 70
 };
 
@@ -45,6 +49,8 @@ const currentResources = {
     vine: 0,
     food: 0,
     stone: 0,
+    obsidian: 0,
+    fang: 0,
     energy: 100
 };
 
@@ -170,7 +176,6 @@ const purchaseAction = (actionKey) => {
 
 const isItemCraftable = (id, requirements) => {
     if (inventoryItemIds.includes(parseInt(id))) {
-        console.log("found")
         return false;
     }
 
@@ -200,6 +205,8 @@ const updateDisplay = () => {
     inventoryVines.innerText = currentResources.vine;
     inventoryFood.innerText = currentResources.food;
     inventoryStone.innerText = currentResources.stone;
+    inventoryObsidian.innerText = currentResources.obsidian;
+    inventoryFang.innerText = currentResources.fang;
 }
 
 const updateToolInfoDisplay = () => {
@@ -390,7 +397,9 @@ const performHuntAction = () => {
     }
 
     let foodAmount = getRandomIntInclusive(1, 20);
+    let fangAmount = Math.floor(parseFloat(getRandomIntInclusive(1, 10)) / 10.0); // <-- 10% chance
     changeResource("food", foodAmount);
+    changeResource("fang", fangAmount);
     return true;
 }
 
@@ -403,11 +412,13 @@ const performGatherAction = () => {
     let vineAmount = getRandomIntInclusive(1, 10);
     let foodAmount = getRandomIntInclusive(1, 10);
     let stoneAmount = getRandomIntInclusive(1, 5);
+    let obsidianAmount = Math.floor(parseFloat(getRandomIntInclusive(1, 10)) / 10.0) // <- 10% chance
 
     changeResource("wood", woodAmount);
     changeResource("vine", vineAmount);
     changeResource("food", foodAmount);
     changeResource("stone", stoneAmount);
+    changeResource("obsidian", obsidianAmount);
     return true;
 }
 
