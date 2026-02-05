@@ -149,7 +149,8 @@ const isActionRequirementListFulfilled = (actionKey) => {
 
 const isItemCraftable = (id, requirements) => {
     if (inventoryItemIds.includes(parseInt(id))) {
-        return;
+        console.log("found")
+        return false;
     }
 
     if (!Array.isArray(requirements)) {
@@ -178,7 +179,6 @@ const updateDisplay = () => {
     inventoryVines.innerText = currentResources.vine;
     inventoryFood.innerText = currentResources.food;
     inventoryStone.innerText = currentResources.stone;
-    console.log(currentResources)
 }
 
 const updateToolInfoDisplay = () => {
@@ -201,7 +201,7 @@ const updateToolInfoDisplay = () => {
     toolInfoImg.src = imgUrl;
 }
 
-const updateButtonClickability = (selectOptionChange = false) => {
+const updateButtonClickability = () => {
     if (isActionRequirementListFulfilled("huntRequirements")) {
         huntBtn.disabled = false;
     } else {
@@ -226,17 +226,12 @@ const updateButtonClickability = (selectOptionChange = false) => {
         sailBtn.disabled = true;
     }
 
-    if (!selectOptionChange) {
-        return;
-    }
-
     const item = getItemSelected();
     const itemId = item["id"];
     const itemRequirements = item["requirements"];
     if (isItemCraftable(itemId, itemRequirements)) {
         craftBtn.disabled = false;
     } else {
-        console.log(item)
         craftBtn.disabled = true;
     }
 }
@@ -417,7 +412,7 @@ const onAnyBtnClick = () => {
 }
 
 const onItemSelectChange = () => {
-    updateButtonClickability(true);
+    updateButtonClickability();
     updateToolInfoDisplay();
 }
 
@@ -437,5 +432,5 @@ window.onload = async () => {
     await resetGame();
     setSelectOptions();
     updateToolInfoDisplay();
-    updateButtonClickability(true);
+    updateButtonClickability();
 }
