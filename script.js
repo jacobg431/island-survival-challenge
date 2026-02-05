@@ -85,6 +85,23 @@ const actionRequirements = {
     }
 }
 
+const effectToModifierMap = {
+    "double_wood": ["wood", 2.0],
+    "quadruple_wood": ["wood", 4.0],
+    "double_hunt": ["food", 2.0],
+    "quadruple_hunt": ["food", 4.0]
+}
+
+const startingModifiers = {
+    wood: 1.0,
+    food: 1.0
+}
+
+const currentModifiers = {
+    wood: 1.0,
+    food: 1.0
+}
+
 let apiData = {}
 
 // Collections
@@ -304,6 +321,7 @@ const resetGame = async () => {
     await fetchApiData();
     removeItemsFromInventory();
     Object.assign(currentResources, startingResources);
+    Object.assign(currentModifiers, startingModifiers);
     updateDisplay();
     updateButtonClickability();
 }
@@ -384,11 +402,38 @@ const purchaseItem = (id, requirements) => {
     return true;
 }
 
-const craftItem = (id, requirements, itemUrl) => {
+const getCurrentModifierAmount = (modifierKey) => {
+    if (!Object.hasOwn(currentModifiers, modifierKey)) {
+        return 1.0;
+    }
+
+    return currentModifiers[modifierKey];
+}
+
+const applyEffectModifer = (effect) => {
+    if (!Object.hasOwn(effectToModifierMap, effect)) {
+        return;
+    }
+
+    const modifierKey = effectToModifierMap[effect][0];
+    const modifierAmount = effectToModifierMap[effect][1];
+    if (currentModifiers[modifierKey] < modifierAmount) {
+        currentModifiers[modifierKey] = modifierAmount; 
+    }
+}
+
+const craftItem = () => {
+    const itemSelected = getItemSelected();
+    const id = itemSelected["id"];
+    const requirements = itemSelected["requirements"];
+    const effect = itemSelected["effect"];
+    const url = itemSelected["img-url"];
+
     if (!purchaseItem(id, requirements)) {
         return;
     }
-    addItemToInventory(id, itemUrl);
+    applyEffectModifer(effect);
+    addItemToInventory(id, url);
 }
 
 const performHuntAction = () => {
@@ -396,7 +441,7 @@ const performHuntAction = () => {
         return false;
     }
 
-    let foodAmount = getRandomIntInclusive(1, 20);
+    let foodAmount = getRandomIntInclusive(1, 20) * Math.floor(getCurrentModifierAmount("wood"));
     let fangAmount = Math.floor(parseFloat(getRandomIntInclusive(1, 10)) / 10.0); // <-- 10% chance
     changeResource("food", foodAmount);
     changeResource("fang", fangAmount);
@@ -407,10 +452,10 @@ const performGatherAction = () => {
     if (!purchaseAction("gatherRequirements")) {
         return false;
     }
-
-    let woodAmount = getRandomIntInclusive(1, 10);
+    
+    let woodAmount = getRandomIntInclusive(1, 10) * Math.floor(getCurrentModifierAmount("wood"));
     let vineAmount = getRandomIntInclusive(1, 10);
-    let foodAmount = getRandomIntInclusive(1, 10);
+    let foodAmount = getRandomIntInclusive(1, 10) * Math.floor(getCurrentModifierAmount("food"));
     let stoneAmount = getRandomIntInclusive(1, 5);
     let obsidianAmount = Math.floor(parseFloat(getRandomIntInclusive(1, 10)) / 10.0) // <- 10% chance
 
@@ -474,11 +519,7 @@ const onSailBtnClick = () => {
 }
 
 const onCraftBtnClick = () => {
-    const itemSelected = getItemSelected();
-    const itemId = itemSelected["id"];
-    const itemRequirements = itemSelected["requirements"];
-    const itemUrl = itemSelected["img-url"];
-    craftItem(itemId, itemRequirements, itemUrl);
+    craftItem();
     updateButtonClickability();
 }
 
