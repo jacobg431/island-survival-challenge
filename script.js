@@ -147,6 +147,27 @@ const isActionRequirementListFulfilled = (actionKey) => {
     return true;
 } 
 
+const purchaseAction = (actionKey) => {
+    if (!isActionRequirementListFulfilled(actionKey)) {
+        return false;
+    }
+
+    const actionObj = actionRequirements[actionKey];
+    const woodAmount = actionObj.wood;
+    const vineAmount = actionObj.vine;
+    const foodAmount = actionObj.food;
+    const stoneAmount = actionObj.stone;
+    const energyAmount = actionObj.energy;
+
+    changeResource("wood", -woodAmount);
+    changeResource("vine", -vineAmount);
+    changeResource("food", -foodAmount);
+    changeResource("stone", -stoneAmount);
+    changeResource("energy", -energyAmount);
+
+    return true;
+}
+
 const isItemCraftable = (id, requirements) => {
     if (inventoryItemIds.includes(parseInt(id))) {
         console.log("found")
@@ -202,28 +223,46 @@ const updateToolInfoDisplay = () => {
 }
 
 const updateButtonClickability = () => {
+    let isActionAvailableArray = [];
+
     if (isActionRequirementListFulfilled("huntRequirements")) {
         huntBtn.disabled = false;
+        isActionAvailableArray.push(true);
     } else {
         huntBtn.disabled = true;
+        isActionAvailableArray.push(false);
     }
     
     if (isActionRequirementListFulfilled("gatherRequirements")) {
         gatherBtn.disabled = false;
+        isActionAvailableArray.push(true);
     } else {
         gatherBtn.disabled = true;
+        isActionAvailableArray.push(false);
     }
     
     if (isActionRequirementListFulfilled("restRequirements")) {
         restBtn.disabled = false;
+        isActionAvailableArray.push(true);
     } else {
         restBtn.disabled = true;
+        isActionAvailableArray.push(false);
     }
     
     if (isActionRequirementListFulfilled("sailRequirements")) {
         sailBtn.disabled = false;
+        isActionAvailableArray.push(true);
     } else {
         sailBtn.disabled = true;
+        isActionAvailableArray.push(false);
+    }
+
+    const noActionsAvailable = isActionAvailableArray.every(element => element === false);
+    if (noActionsAvailable) {
+        setTimeout(() => {
+            gameOver();
+        }, 200);
+        return;
     }
 
     const item = getItemSelected();
@@ -345,28 +384,20 @@ const craftItem = (id, requirements, itemUrl) => {
     addItemToInventory(id, itemUrl);
 }
 
-const onHuntBtnClick = () => {
-    if (!isActionRequirementListFulfilled("huntRequirements")) {
-        return;
+const performHuntAction = () => {
+    if (!purchaseAction("huntRequirements")) {
+        return false;
     }
-
-    setTimeout(() => {
-        huntFirstAudio.play();
-    }, 10);
-    setTimeout(() => {
-        huntSecondAudio.play();
-    }, 500);
 
     let foodAmount = getRandomIntInclusive(1, 20);
     changeResource("food", foodAmount);
+    return true;
 }
 
-const onGatherBtnClick = () => {
-    if (!isActionRequirementListFulfilled("gatherRequirements")) {
-        return;
+const performGatherAction = () => {
+    if (!purchaseAction("gatherRequirements")) {
+        return false;
     }
-
-    gatherAudio.play();
 
     let woodAmount = getRandomIntInclusive(1, 10);
     let vineAmount = getRandomIntInclusive(1, 10);
@@ -377,21 +408,54 @@ const onGatherBtnClick = () => {
     changeResource("vine", vineAmount);
     changeResource("food", foodAmount);
     changeResource("stone", stoneAmount);
+    return true;
+}
+
+const performRestAction = () => {
+    if (!purchaseAction("restRequirements")) {
+        return false;
+    }
+
+    let energyAmount = getRandomIntInclusive(1, 20);
+    changeResource("energy", energyAmount);
+    return true;
+}
+
+const performSailAction = () => {
+    return purchaseAction("sailRequirements")
+}
+
+const onHuntBtnClick = () => {
+    if (!performHuntAction()) {
+        return;
+    }
+
+    setTimeout(() => {
+        huntFirstAudio.play();
+    }, 10);
+    setTimeout(() => {
+        huntSecondAudio.play();
+    }, 500);
+}
+
+const onGatherBtnClick = () => {
+    if (!performGatherAction()) {
+        return;
+    }
+
+    gatherAudio.play();
 }
 
 const onRestBtnClick = () => {
-    if (!isActionRequirementListFulfilled("restRequirements")) {
+    if (!performRestAction()) {
         return;
     }
 
     restAudio.play();
-
-    let energyAmount = getRandomIntInclusive(1, 20);
-    changeResource("energy", energyAmount);
 }
 
 const onSailBtnClick = () => {
-    if (!isActionRequirementListFulfilled("sailRequirements")) {
+    if (!performSailAction()) {
         return;
     }
 
