@@ -228,7 +228,7 @@ select {
     background-color: var(--background-negative-color);
     display: flex;
     gap: var(--spacing-size);
-    justify-content: center;
+    justify-content: space-between;
     padding: var(--spacing-lg-size);
     width: 100%;
 }
@@ -256,7 +256,10 @@ select {
 .tool-img-wrapper {
     border: var(--border-solid) var(--background-color);
     border-radius: var(--spacing-size);
-    width: 180px;
+    max-height: 120px;
+    min-height: 120px;
+    max-width: 120px;
+    min-width: 120px;
 }
 
 .tool-dropdown-wrapper {

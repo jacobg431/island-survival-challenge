@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Island Survival Challenge</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon.png">
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
 </head>
@@ -20,31 +21,23 @@
                     </div>
                     <p class="emoji">&#128170;</p>
                     <div class="progress-container">
-                        <div class="progress-bar" style="width: 50%"></div>
+                        <div id="energy-bar" class="progress-bar" style="width: 50%"></div>
                     </div>
                 </div>
                 
                 <div class="inventory-column">
                     <div class="inventory-column-inner">
-                        <span class="emoji">&#129704; 10</span>
-                        <span class="emoji">&#129344; 10</span>
-                        <span class="emoji">&#127830; 10</span>
-                        <span class="emoji">&#128507; 5</span>
+                        <span class="emoji">&#x1fab5; <span id="inventory-wood">0</span></span>
+                        <span class="emoji">&#129344; <span id="inventory-vines">0</span></span>
+                        <span class="emoji">&#127830; <span id="inventory-food">0</span></span>
+                        <span class="emoji">&#129704; <span id="inventory-stone">0</span></span>
+                        <span class="emoji">&#128507; <span id="inventory-obsidian">0</span></span>
+                        <span class="emoji">&#x1f9b7; <span id="inventory-fang">0</span></span>
                     </div>
                 </div>
                 
                 <div class="inventory-column">
-                    <div id="inventory">
-                        <div class="inventory-item-wrapper">
-                            <img src="https://res.cloudinary.com/dvwpcohmk/image/upload/v1770034511/Axe_yrbpm2.png" alt="" class="inventory-item">
-                        </div>
-                        <div class="inventory-item-wrapper">
-                            <img src="https://res.cloudinary.com/dvwpcohmk/image/upload/v1770034535/Spear_mboby3.jpg" alt="" class="inventory-item">
-                        </div>
-                        <div class="inventory-item-wrapper">
-                            <img src="https://res.cloudinary.com/dvwpcohmk/image/upload/v1770034534/Boat_epgaov.png" alt="" class="inventory-item">
-                        </div>
-                    </div>
+                    <div id="inventory"></div>
                 </div>
             </section>
 
@@ -53,19 +46,19 @@
                     <h3>Actions</h3>
                     <div class="action-group-wrapper">
                         <div class="action-item-wrapper">
-                            <button>Hunt</button>
+                            <button id="hunt-button">Hunt</button>
                             <span class="emoji">&#127830;</span>
                         </div>
                         <div class="action-item-wrapper">
-                            <button>Gather</button>
-                            <span class="emoji">&#129704; &#129344; &#128507;</span>
+                            <button id="gather-button">Gather</button>
+                            <span class="emoji">&#x1fab5; &#129344; &#129704;</span>
                         </div>
                         <div class="action-item-wrapper">
-                            <button>Rest</button>
+                            <button id="rest-button">Rest</button>
                             <span class="emoji">&#128170;</span>
                         </div>
                         <div class="action-item-wrapper">
-                            <button>Sail Away</button>
+                            <button id="sail-button">Sail Away</button>
                             <span class="emoji">&#9973;</span>
                         </div>
                     </div>
@@ -78,11 +71,11 @@
                 <div class="tools-column">
                     <div class="tool-info-wrapper">
                         <div class="tool-info-inner-wrapper">
-                            <h4>Spear</h4>
-                            <p>Increases food gathering by hunting (2x).</p>
+                            <h4 id="tool-info-title">Title</h4>
+                            <p id="tool-info-description">This is a very interesting description</p>
                             <div class="tool-requirement-wrapper">
                             <p class="font-bold">Requirements:</p>
-                            <ul>
+                            <ul id="tool-info-requirements">
                                 <li>First item</li>
                                 <li>Second item</li>
                                 <li>Third item</li>
@@ -90,8 +83,13 @@
                             </div>
                         </div>
                         
-                        <div class="tool-img-wrapper">
-                            <img src="https://res.cloudinary.com/dvwpcohmk/image/upload/v1770034511/Axe_yrbpm2.png" alt="" class="inventory-item">
+                        <div id="tool-info-img-wrapper" class="tool-img-wrapper">
+                            <img
+                                id="tool-info-img" 
+                                src="" 
+                                alt="" 
+                                class="inventory-item"
+                            >
                         </div>
                     </div>
                 </div>
@@ -100,14 +98,10 @@
                     <div class="tool-selection-wrapper">
                         <div class="tool-dropdown-wrapper">
                             <p>Choose an item to craft</p>
-                            <select>
-                                <option value="axe">Axe</option>
-                                <option value="spear" selected>Spear</option>
-                                <option value="boat">Boat</option>
-                            </select>
+                            <select id="item-select"></select>
                         </div>
                         <div class="tool-button-wrapper">
-                            <button>Craft</button>
+                            <button id="craft-button" >Craft</button>
                         </div>
                     </div>
                 </div>
