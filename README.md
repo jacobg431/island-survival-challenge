@@ -8,7 +8,7 @@ resources and craft a boat to escape the island.
 
 ## Prerequisites
 If you want to host this webpage yourself, make sure you have Git installed and access to any hosting service of your choice.
-Otherwise, the webpage is available at 
+Otherwise, the webpage is available at https://jacobg431.github.io/island-survival-challenge/ .
 
 ## Install
 Install the application by cloning this repository through your preferred CLI program:
