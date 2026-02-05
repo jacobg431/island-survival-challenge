@@ -102,7 +102,7 @@ const fetchApiData = async () => {
         });
 }
 
-const getToolItemById = (id) => {
+const getItemById = (id) => {
     for (const tool of apiData) {
         if (tool.id === id) {
             return tool;
@@ -122,7 +122,7 @@ const setSelectOptions = () => {
 
 const getItemSelected = () => {
     const itemSelectedId = parseInt(itemSelect.value);
-    return getToolItemById(itemSelectedId);
+    return getItemById(itemSelectedId);
 }
 
 const isActionRequirementListFulfilled = (actionKey) => {
@@ -178,6 +178,7 @@ const updateDisplay = () => {
     inventoryVines.innerText = currentResources.vine;
     inventoryFood.innerText = currentResources.food;
     inventoryStone.innerText = currentResources.stone;
+    console.log(currentResources)
 }
 
 const updateToolInfoDisplay = () => {
@@ -240,11 +241,7 @@ const updateButtonClickability = (selectOptionChange = false) => {
     }
 }
 
-const addItemToInventory = (id, requirements, imgUrl) => {
-    if (!isItemCraftable(id, requirements, imgUrl)) {
-        return;
-    }
-
+const addItemToInventory = (id, imgUrl) => {
     let inventoryItemWrapper = document.createElement("div");
     let inventoryItem = document.createElement("img");
 
@@ -292,50 +289,6 @@ const getRandomIntInclusive = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-const changeWood = (amount) => {
-    const newWood = currentResources.wood + amount;
-    if (newWood < 0) {
-        return false;
-    }
-
-    currentResources.wood = newWood;
-    updateDisplay();
-    return true;
-}
-
-const changeVines = (amount) => {
-    const newVines = currentResources.vine + amount;
-    if (newVines < 0) {
-        return false;
-    }
-
-    currentResources.vine = newVines;
-    updateDisplay();
-    return true;
-}
-
-const changeFood = (amount) => {
-    const newFood = currentResources.food + amount;
-    if (newFood < 0) {
-        return false;
-    }
-
-    currentResources.food = newFood;
-    updateDisplay();
-    return true;
-}
-
-const changeStone = (amount) => {
-    const newStone = currentResources.stone + amount;
-    if (newStone < 0) {
-        return false;
-    }
-
-    currentResources.stone = newStone;
-    updateDisplay();
-    return true;
-}
-
 const changeEnergy = (amount) =>  {
     const energy = Math.floor(parseFloat(progressBar.style.width));
     const newEnergy = energy + amount;
@@ -355,8 +308,50 @@ const changeEnergy = (amount) =>  {
     return true;
 }
 
+const changeResource = (resource, amount) => {
+    if (!Object.hasOwn(currentResources, resource)) {
+        return false;
+    }
+
+    if (resource === "energy") {
+        return changeEnergy(amount);
+    }
+    
+    const newAmount = currentResources[resource] + amount;
+    if (newAmount < 0) {
+        return false;
+    }
+
+    currentResources[resource] = newAmount;
+
+    updateDisplay();
+    return true;
+}
+
+const purchaseItem = (id, requirements) => {
+    if(!isItemCraftable(id, requirements)) {
+        return false;
+    }
+
+    for (let i = 0; i < requirements.length; i++) {
+        const resourceAmountArray = requirements[i].split(" ");
+        const amount = parseInt(resourceAmountArray[0]);
+        const resource = resourceAmountArray.at(-1);
+        changeResource(resource, -amount);
+    }
+
+    return true;
+}
+
+const craftItem = (id, requirements, itemUrl) => {
+    if (!purchaseItem(id, requirements)) {
+        return;
+    }
+    addItemToInventory(id, itemUrl);
+}
+
 const onHuntBtnClick = () => {
-    if (!changeEnergy(-20)) {
+    if (!isActionRequirementListFulfilled("huntRequirements")) {
         return;
     }
 
@@ -368,11 +363,11 @@ const onHuntBtnClick = () => {
     }, 500);
 
     let foodAmount = getRandomIntInclusive(1, 20);
-    changeFood(foodAmount);
+    changeResource("food", foodAmount);
 }
 
 const onGatherBtnClick = () => {
-    if (!changeEnergy(-10)) {
+    if (!isActionRequirementListFulfilled("gatherRequirements")) {
         return;
     }
 
@@ -383,29 +378,25 @@ const onGatherBtnClick = () => {
     let foodAmount = getRandomIntInclusive(1, 10);
     let stoneAmount = getRandomIntInclusive(1, 5);
 
-    changeWood(woodAmount);
-    changeVines(vineAmount);
-    changeFood(foodAmount);
-    changeStone(stoneAmount);
+    changeResource("wood", woodAmount);
+    changeResource("vine", vineAmount);
+    changeResource("food", foodAmount);
+    changeResource("stone", stoneAmount);
 }
 
 const onRestBtnClick = () => {
-    if (!changeFood(-10)) {
+    if (!isActionRequirementListFulfilled("restRequirements")) {
         return;
     }
 
     restAudio.play();
 
     let energyAmount = getRandomIntInclusive(1, 20);
-    changeEnergy(energyAmount);
+    changeResource("energy", energyAmount);
 }
 
 const onSailBtnClick = () => {
-    if (!getToolItemById()) {
-        return;
-    }
-    
-    if (!changeEnergy(-40)) {
+    if (!isActionRequirementListFulfilled("sailRequirements")) {
         return;
     }
 
@@ -417,7 +408,7 @@ const onCraftBtnClick = () => {
     const itemId = itemSelected["id"];
     const itemRequirements = itemSelected["requirements"];
     const itemUrl = itemSelected["img-url"];
-    addItemToInventory(itemId, itemRequirements, itemUrl);
+    craftItem(itemId, itemRequirements, itemUrl);
     updateButtonClickability();
 }
 
