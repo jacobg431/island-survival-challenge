@@ -83,27 +83,27 @@ const actionRequirements = {
         stone: 0,
         energy: 40
     }
-}
+};
 
 const effectToModifierMap = {
     "double_wood": ["wood", 2.0],
     "quadruple_wood": ["wood", 4.0],
     "double_hunt": ["food", 2.0],
     "quadruple_hunt": ["food", 4.0]
-}
+};
 
 const startingModifiers = {
     wood: 1.0,
     food: 1.0
-}
+};
 
 const currentModifiers = {
     wood: 1.0,
     food: 1.0
-}
+};
 
 // Global variables
-let apiData = {}
+let apiData = {};
 let gameActive = false;
 
 // Collections
@@ -125,7 +125,7 @@ const fetchApiData = async () => {
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error.message);
         });
-}
+};
 
 const getItemById = (id) => {
     for (const tool of apiData) {
@@ -134,7 +134,7 @@ const getItemById = (id) => {
         }
     }
     return false;
-}
+};
 
 const setSelectOptions = () => {
     apiData.forEach(tool => {
@@ -143,12 +143,12 @@ const setSelectOptions = () => {
         option.textContent = tool.title
         itemSelect.appendChild(option);
     });
-}
+};
 
 const getItemSelected = () => {
     const itemSelectedId = parseInt(itemSelect.value);
     return getItemById(itemSelectedId);
-}
+};
 
 const isActionRequirementListFulfilled = (actionKey) => {
     if (!Object.hasOwn(actionRequirements, actionKey)) {
@@ -170,7 +170,7 @@ const isActionRequirementListFulfilled = (actionKey) => {
     }
 
     return true;
-} 
+};
 
 const purchaseAction = (actionKey) => {
     if (!isActionRequirementListFulfilled(actionKey)) {
@@ -191,7 +191,7 @@ const purchaseAction = (actionKey) => {
     changeResource("energy", -energyAmount);
 
     return true;
-}
+};
 
 const isItemCraftable = (id, requirements) => {
     if (inventoryItemIds.includes(parseInt(id))) {
@@ -216,7 +216,7 @@ const isItemCraftable = (id, requirements) => {
     }
 
     return true;
-}
+};
 
 const updateDisplay = () => {
     progressBar.style.width = String(currentResources.energy) + "%";
@@ -226,7 +226,7 @@ const updateDisplay = () => {
     inventoryStone.innerText = currentResources.stone;
     inventoryObsidian.innerText = currentResources.obsidian;
     inventoryFang.innerText = currentResources.fang;
-}
+};
 
 const updateToolInfoDisplay = () => {
     const itemSelected = getItemSelected(); 
@@ -246,7 +246,7 @@ const updateToolInfoDisplay = () => {
     }
 
     toolInfoImg.src = imgUrl;
-}
+};
 
 const updateButtonClickability = () => {
     let isActionAvailableArray = [];
@@ -299,7 +299,7 @@ const updateButtonClickability = () => {
     } else {
         craftBtn.disabled = true;
     }
-}
+};
 
 const addItemToInventory = (id, imgUrl) => {
     let inventoryItemWrapper = document.createElement("div");
@@ -312,12 +312,12 @@ const addItemToInventory = (id, imgUrl) => {
     inventory.appendChild(inventoryItemWrapper);
 
     inventoryItemIds.push(parseInt(id));
-}
+};
 
 const removeItemsFromInventory = () => {
     inventoryItemIds.length = 0;
     inventory.replaceChildren();
-}
+};
 
 const resetGame = async () => {
     await fetchApiData();
@@ -327,7 +327,7 @@ const resetGame = async () => {
     gameActive = true;
     updateDisplay();
     updateButtonClickability();
-}
+};
 
 const gameOver = () => {
     gameActive = false;
@@ -338,7 +338,7 @@ const gameOver = () => {
         alert("Game Over!");
         resetGame();
     }, 10);
-}
+};
 
 const gameVictory = () => {
     gameActive = false;
@@ -349,13 +349,13 @@ const gameVictory = () => {
         alert("YOU WIN!");
         resetGame();
     }, 200);
-}
+};
 
 const getRandomIntInclusive = (min, max) => {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1) + min);
-}
+};
 
 const changeEnergy = (amount) =>  {
     const energy = Math.floor(parseFloat(progressBar.style.width));
@@ -374,7 +374,7 @@ const changeEnergy = (amount) =>  {
     }
     updateDisplay();
     return true;
-}
+};
 
 const changeResource = (resource, amount) => {
     if (!Object.hasOwn(currentResources, resource)) {
@@ -394,7 +394,7 @@ const changeResource = (resource, amount) => {
 
     updateDisplay();
     return true;
-}
+};
 
 const purchaseItem = (id, requirements) => {
     if(!isItemCraftable(id, requirements)) {
@@ -409,7 +409,7 @@ const purchaseItem = (id, requirements) => {
     }
 
     return true;
-}
+};
 
 const getCurrentModifierAmount = (modifierKey) => {
     if (!Object.hasOwn(currentModifiers, modifierKey)) {
@@ -417,7 +417,7 @@ const getCurrentModifierAmount = (modifierKey) => {
     }
 
     return currentModifiers[modifierKey];
-}
+};
 
 const applyEffectModifer = (effect) => {
     if (!Object.hasOwn(effectToModifierMap, effect)) {
@@ -429,7 +429,7 @@ const applyEffectModifer = (effect) => {
     if (currentModifiers[modifierKey] < modifierAmount) {
         currentModifiers[modifierKey] = modifierAmount; 
     }
-}
+};
 
 const craftItem = () => {
     const itemSelected = getItemSelected();
@@ -443,7 +443,7 @@ const craftItem = () => {
     }
     applyEffectModifer(effect);
     addItemToInventory(id, url);
-}
+};
 
 const performHuntAction = () => {
     if (!purchaseAction("huntRequirements")) {
@@ -455,7 +455,7 @@ const performHuntAction = () => {
     changeResource("food", foodAmount);
     changeResource("fang", fangAmount);
     return true;
-}
+};
 
 const performGatherAction = () => {
     if (!purchaseAction("gatherRequirements")) {
@@ -474,7 +474,7 @@ const performGatherAction = () => {
     changeResource("stone", stoneAmount);
     changeResource("obsidian", obsidianAmount);
     return true;
-}
+};
 
 const performRestAction = () => {
     if (!purchaseAction("restRequirements")) {
@@ -484,11 +484,11 @@ const performRestAction = () => {
     let energyAmount = getRandomIntInclusive(1, 20);
     changeResource("energy", energyAmount);
     return true;
-}
+};
 
 const performSailAction = () => {
     return purchaseAction("sailRequirements")
-}
+};
 
 const onHuntBtnClick = () => {
     if (!performHuntAction()) {
@@ -501,7 +501,7 @@ const onHuntBtnClick = () => {
     setTimeout(() => {
         huntSecondAudio.play();
     }, 500);
-}
+};
 
 const onGatherBtnClick = () => {
     if (!performGatherAction()) {
@@ -509,7 +509,7 @@ const onGatherBtnClick = () => {
     }
 
     gatherAudio.play();
-}
+};
 
 const onRestBtnClick = () => {
     if (!performRestAction()) {
@@ -517,7 +517,7 @@ const onRestBtnClick = () => {
     }
 
     restAudio.play();
-}
+};
 
 const onSailBtnClick = () => {
     if (!performSailAction()) {
@@ -525,21 +525,21 @@ const onSailBtnClick = () => {
     }
 
     gameVictory();
-}
+};
 
 const onCraftBtnClick = () => {
     craftItem();
     updateButtonClickability();
-}
+};
 
 const onAnyBtnClick = () => {
     updateButtonClickability();
-}
+};
 
 const onItemSelectChange = () => {
     updateButtonClickability();
     updateToolInfoDisplay();
-}
+};
 
 huntBtn.addEventListener("click", onHuntBtnClick);
 gatherBtn.addEventListener("click", onGatherBtnClick);
@@ -549,7 +549,7 @@ craftBtn.addEventListener("click", onCraftBtnClick);
 
 for (let i = 0; i < allBtns.length; i++) {
     allBtns[i].addEventListener("click", onAnyBtnClick);
-}
+};
 
 itemSelect.addEventListener("change", onItemSelectChange);
 
@@ -558,4 +558,4 @@ window.onload = async () => {
     setSelectOptions();
     updateToolInfoDisplay();
     updateButtonClickability();
-}
+};
