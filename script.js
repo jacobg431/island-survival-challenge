@@ -140,7 +140,7 @@ const setSelectOptions = () => {
     apiData.forEach(tool => {
         const option = document.createElement("option");
         option.value = tool.id;
-        option.textContent = tool.title
+        option.textContent = tool.title;
         itemSelect.appendChild(option);
     });
 };
@@ -333,7 +333,7 @@ const gameOver = () => {
     gameActive = false;
     setTimeout(() => {
         playerDeathAudio.play();
-    }, 10)
+    }, 10);
     setTimeout(() => {
         alert("Game Over!");
         resetGame();
@@ -466,7 +466,7 @@ const performGatherAction = () => {
     let vineAmount = getRandomIntInclusive(1, 10);
     let foodAmount = getRandomIntInclusive(1, 10) * Math.floor(getCurrentModifierAmount("food"));
     let stoneAmount = getRandomIntInclusive(1, 5);
-    let obsidianAmount = Math.floor(parseFloat(getRandomIntInclusive(1, 10)) / 10.0) // <- 10% chance
+    let obsidianAmount = Math.floor(parseFloat(getRandomIntInclusive(1, 10)) / 10.0); // <- 10% chance
 
     changeResource("wood", woodAmount);
     changeResource("vine", vineAmount);
@@ -487,7 +487,7 @@ const performRestAction = () => {
 };
 
 const performSailAction = () => {
-    return purchaseAction("sailRequirements")
+    return purchaseAction("sailRequirements");
 };
 
 const onHuntBtnClick = () => {
@@ -549,7 +549,7 @@ craftBtn.addEventListener("click", onCraftBtnClick);
 
 for (let i = 0; i < allBtns.length; i++) {
     allBtns[i].addEventListener("click", onAnyBtnClick);
-};
+}
 
 itemSelect.addEventListener("change", onItemSelectChange);
 
